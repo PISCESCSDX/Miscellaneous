@@ -1,0 +1,56 @@
+function []= cou_monitor_kf(basedir, tint, bad_ch)
+%function []= cou_monitor_kf(basedir, tint, bad_ch)
+%20070117 Ullrich, Brandt
+%
+% Show the spatiotemporal plot and the kf-spectrum of incoming
+% Couronne-measurements. Wait automatically until 8 new mdf-files came into
+% the directory "basedir".
+%
+% NEEDS:    cou_moni_loadmdf.m
+%           mdf_list.m
+%
+% input:    basedir     directory containing the mdf-files
+%           tint(opt)   time intervall to show (amount of shown samples)
+%           bad_ch(opt) 1dim vector which contains the bad channels
+% output:   a spatiotemporal pcolor plot and the kf-spectrum
+%
+% EXPAMPLE: bd=pwd;
+%           cou_monitor_kf(bd, 5000, [3 34 45:47])
+
+    if basedir(end) ~= '\', basedir= [basedir, '\']; end
+    if nargin < 3
+        bad_ch = [];
+    end
+    if nargin < 2
+        tint = 5000;
+    end        
+    
+    files = mdf_list(basedir);    
+    while 1==1
+        [files_cur fsz] = mdf_list(basedir);
+        newfiles = size(files_cur, 2) - size(files, 2);
+        % check wether 8 new files arrived and wether the size of them is
+        % > 0 and all sizes are equal
+        if newfiles == 1 && (sum(fsz(:,end)) == 8*fsz(1,end) && sum(fsz(:,end)) > 0)
+            for i1= 0:7
+                namevec{i1 + 1}= files_cur(end-i1, end);
+            end
+            a = clock_int;
+            disp(['measurement ' a  ' load and process ...']);
+            [mat, tvec] = cou_moni_loadmdf(basedir, namevec, tint);                
+            figure(1)
+            % set(gcf, 'position', [010 525 450 250])
+            set(gcf, 'position', [05 597 450 350]);         
+            cou_moni_zebraplot(mat, tvec, bad_ch);
+            drawnow;
+            %  calculate and plot kf-spectrum
+            figure(2)
+            set(gcf, 'position', [462 597 450 350]);
+            [freq mvec kfsp] = cou_kfspec(mat', tvec, [-8 8], 25000, 50, 0.9);
+            cou_subplotkf(freq, mvec, kfsp, 16, max(max(kfsp)));
+            drawnow;
+            % load current files to files
+            files = files_cur;
+        end
+    end
+end

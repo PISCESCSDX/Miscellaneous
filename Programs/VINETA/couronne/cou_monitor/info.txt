@@ -1,0 +1,14 @@
+(Fast) Online Evaluation of Couronne measurements:
+==================================================
+
+recommendations:
+----------------
+(1) 	save data (mdf-files) over network connection to D:\Lenz_Data\couronne
+
+(2)	MatLab:	set a variable to this directory
+	coudir = 'D:\Lenz_Data\couronne' (or coudir = pwd , if you are in this directory)
+
+m-file			command			result
+----------------------------------------------------------------------------------------
+cou_monitor.m		cou_monitor(coudir)	show spatiotemporal plot (zebra-plot)
+cou_monitor_kf.m	cou_monitor_kf(coudir)	show spatiotemporal plot and kf-spectrum
