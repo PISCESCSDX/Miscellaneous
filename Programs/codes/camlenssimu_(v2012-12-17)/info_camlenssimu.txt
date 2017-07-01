@@ -1,0 +1,30 @@
+Rough summary about the "camera code"
+=====================================
+In simple words the code calculates the picture of a light emitting volume (e.g., a plasma) imaged by a single lens on a screen (e.g., a CCD chip). The code does not divide between wavelengths - here, light is just a measure for energy flux. (However, it would be possible to calculate a picture for several wavelength ranges and sum it up at the end to obtain a real color simulation.)
+
+
+Basic steps for Getting results
+-------------------------------
+(1.) Provide the data of the light emitting plasma volume: mkplasdat.m
+A 3D grid matrix is calculated, that contains the light emission from each spatial grid point.
+Here, I modeled the plasma light of a drift wave with certain drift wave parameters (mode number, parallel length, and so on).
+
+(2.) Calculate the image of the stationary (background) plasma:
+camlenssimu0.m
+
+(3.) Calculate the image of the background+fluctuation plasma:
+camlenssimu1.m
+
+(4.) Compact the results:
+camsummary.m
+
+(5.) Plot the results:
+mkpicsingle.m
+
+The other included m-files are just sub-routine files.
+The test picture will look not good, because in the mkplasdat.m
+the grid resolution is small, to save calculation time.
+Better results (=longer calcualtion) can be achieved with
+xres = 0.5; % mm
+yres = 0.5; % mm
+zres = 50;  % mm 
